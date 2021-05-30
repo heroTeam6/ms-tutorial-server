@@ -32,10 +32,11 @@ client.connect((err) => {
     });
   });
 
-  app.get("/isAdmin", (req, res) => {
-    adminsCollection
-      .find({ email: req.query.email })
-      .toArray((err, docs) => res.send(!!docs.length));
+  app.post("/isAdmin", (req, res) => {
+    const email = req.body.Email;
+    adminsCollection.find({ Email: email }).toArray((err, admins) => {
+      res.send(admins.length > 0);
+    });
   });
 
   console.log("db connected!", err);
