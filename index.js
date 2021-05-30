@@ -21,22 +21,21 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 client.connect((err) => {
-  const adminCollection = client.db("ms_tutorial").collection("makeAdmin");
+  const adminsCollection = client.db("ms_tutorial").collection("makeAdmin");
 
-  app.post("/adminUser", (req, res) => {
+  app.post("/addAdmin", (req, res) => {
     const adminUser = req.body;
-    adminCollection.insertOne(adminUser).then((result) => {
+    adminsCollection.insertOne(adminUser).then((result) => {
       console.log("inserted count", result.insertedCount);
       res.send(result.insertedCount > 0);
       console.log(result);
     });
   });
 
-  app.post("/isAdmin", (req, res) => {
-    const email = req.body.email;
-    adminCollection.find({ email: email }).toArray((err, admins) => {
-      res.send(admins.length > 0);
-    });
+  app.get("/isAdmin", (req, res) => {
+    adminsCollection
+      .find({ email: req.query.email })
+      .toArray((err, docs) => res.send(!!docs.length));
   });
 
   console.log("db connected!", err);
